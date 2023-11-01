@@ -1,0 +1,59 @@
+<html>
+	<head>
+		<title> Lab2 </title>
+	</head>
+	<body>
+		<h1> Lab2. Golang, monitor list </h1>
+		<button onclick="loadMonitors(false)">Load monitor list</button>	
+		<button onclick="loadMonitors(true)">Load monitor stats</button>	
+		<button onclick="loadMonitor()">Load monitor</button>	
+		<input type="number" id="mon_id" value=1></input>
+		<div id="monitors"/>
+		<script>
+			function loadMonitors(dev_flag){
+				fetch(`http://192.168.200.97:8080/category/monitors?dev=${dev_flag}`)
+					.then(response => response.json())
+					.then(data => {
+						const monitorDiv = document.getElementById("monitors");
+						monitorDiv.innerHTML = '';
+						console.log(data);
+						if (data.monitors){
+							data.monitors.forEach(monitor =>{
+								const element = document.createElement("p");
+								element.textContent = `ID: ${monitor[0]} name: ${monitor[1]}`;
+								console.log(dev_flag);
+								if(dev_flag){
+									console.log("ADD");	
+									element.textContent += ` Count: ${monitor[2]}`
+								} else {
+									console.log("NOO");
+								}
+								monitorDiv.appendChild(element);
+							});
+						} else {
+							console.log("Error");
+						}
+					});
+			}
+		</script>
+		<script>
+			function loadMonitor(){
+				const num = document.getElementById("mon_id").value;
+				fetch(`http://192.168.200.97:8080/category/monitor/${num}`)
+					.then(response => response.json())
+					.then(data => {
+						console.log(data)
+						const monitorDiv = document.getElementById("monitors");
+						monitorDiv.innerHTML = '';
+						if(data.monitor){
+							const element = document.createElement("p");
+							element.textContent = `Monitor ID: ${data.monitor[0]} name: ${data.monitor[1]}`;
+							monitorDiv.appendChild(element);
+						} else {
+							console.log("Error");
+						}
+					});
+			}
+		</script>
+	</body>
+</html>
